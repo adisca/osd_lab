@@ -1,0 +1,117 @@
+[General]
+kile_livePreviewEnabled=false
+kile_livePreviewStatusUserSpecified=false
+kile_livePreviewTool=LivePreview-PDFLaTeX
+lastDocument=apendix.tex
+
+[document-settings,item:HAL9000.bib]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=BibTeX
+Highlighting Set By User=false
+Indentation Mode=normal
+Mode=BibTeX
+Mode Set By User=false
+
+[document-settings,item:HAL9000.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Highlighting Set By User=false
+Indentation Mode=normal
+Mode=LaTeX
+Mode Set By User=false
+
+[document-settings,item:apendix.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Highlighting Set By User=false
+Indentation Mode=normal
+Mode=LaTeX
+Mode Set By User=false
+
+[document-settings,item:ch3.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Highlighting Set By User=false
+Indentation Mode=normal
+Mode=LaTeX
+Mode Set By User=false
+
+[document-settings,item:ch4.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Highlighting Set By User=false
+Indentation Mode=normal
+Mode=LaTeX
+Mode Set By User=false
+
+[item:HAL9000.bib]
+open=true
+order=4
+
+[item:HAL9000.tex]
+open=true
+order=0
+
+[item:apendix.tex]
+open=true
+order=2
+
+[item:ch1.tex]
+open=false
+order=-1
+
+[item:ch2.tex]
+open=false
+order=-1
+
+[item:ch3.tex]
+open=true
+order=1
+
+[item:ch4.tex]
+open=true
+order=3
+
+[item:hal9000.kilepr]
+open=false
+order=-1
+
+[view-settings,view=0,item:HAL9000.bib]
+CursorColumn=28
+CursorLine=127
+JumpList=
+TextFolding=[]
+ViMarks=.,129,22,[,129,22,],129,100
+
+[view-settings,view=0,item:HAL9000.tex]
+CursorColumn=0
+CursorLine=13
+JumpList=
+TextFolding=[]
+ViMarks=.,13,0,[,13,0,],13,0
+
+[view-settings,view=0,item:apendix.tex]
+CursorColumn=70
+CursorLine=1472
+JumpList=
+TextFolding=[]
+ViMarks=.,1472,48,[,1472,48,],1472,69
+
+[view-settings,view=0,item:ch3.tex]
+CursorColumn=31
+CursorLine=186
+JumpList=
+TextFolding=[]
+ViMarks=
+
+[view-settings,view=0,item:ch4.tex]
+CursorColumn=63
+CursorLine=451
+JumpList=
+TextFolding=[]
+ViMarks=.,449,177,[,449,177,],449,177

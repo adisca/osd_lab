@@ -1,0 +1,141 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.Appendix.1}
+\contentsline {section}{\numberline {1.1}Versus Pintos}{1}{section.Appendix.1.1}
+\contentsline {section}{\numberline {1.2}Project Overview}{2}{section.Appendix.1.2}
+\contentsline {subsection}{\numberline {1.2.1}Root Directory}{2}{subsection.Appendix.1.2.1}
+\contentsline {subsection}{\numberline {1.2.2}Source Tree Overview}{4}{subsection.Appendix.1.2.2}
+\contentsline {subsection}{\numberline {1.2.3}Building HAL9000 }{6}{subsection.Appendix.1.2.3}
+\contentsline {subsection}{\numberline {1.2.4}Running HAL9000 }{7}{subsection.Appendix.1.2.4}
+\contentsline {section}{\numberline {1.3}Grading}{7}{section.Appendix.1.3}
+\contentsline {subsection}{\numberline {1.3.1}Design}{7}{subsection.Appendix.1.3.1}
+\contentsline {subsubsection}{Design Document}{7}{section*.2}
+\contentsline {subsection}{\numberline {1.3.2}Testing}{9}{subsection.Appendix.1.3.2}
+\contentsline {section}{\numberline {1.4}Useful documents and links}{10}{section.Appendix.1.4}
+\contentsline {chapter}{\numberline {2}Project 1: Threads}{11}{chapter.Appendix.2}
+\contentsline {section}{\numberline {2.1}Overview}{11}{section.Appendix.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Threading System Initialization}{11}{subsection.Appendix.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}Synchronization}{12}{subsection.Appendix.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Development}{13}{subsection.Appendix.2.1.3}
+\contentsline {section}{\numberline {2.2}Assignment}{13}{section.Appendix.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Timer}{14}{subsection.Appendix.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Priority Scheduler}{15}{subsection.Appendix.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Priority Donation}{15}{subsection.Appendix.2.2.3}
+\contentsline {subsection}{\numberline {2.2.4}BONUS: Per-CPU ready lists}{17}{subsection.Appendix.2.2.4}
+\contentsline {section}{\numberline {2.3}Source Files}{17}{section.Appendix.2.3}
+\contentsline {section}{\numberline {2.4}FAQ}{18}{section.Appendix.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Priority Scheduler}{18}{subsection.Appendix.2.4.1}
+\contentsline {subsection}{\numberline {2.4.2}Priority Donation}{19}{subsection.Appendix.2.4.2}
+\contentsline {chapter}{\numberline {3}Project 2: Userprog}{21}{chapter.Appendix.3}
+\contentsline {section}{\numberline {3.1}Overview}{21}{section.Appendix.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Userprog Initialization}{21}{subsection.Appendix.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Issuing system calls}{22}{subsection.Appendix.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}Working with user applications}{22}{subsection.Appendix.3.1.3}
+\contentsline {subsubsection}{Copying an application to HAL9000 's filesystem}{22}{section*.3}
+\contentsline {subsubsection}{Loading an application}{23}{section*.4}
+\contentsline {subsubsection}{Virtual Memory Layout}{23}{section*.5}
+\contentsline {subsubsection}{Accessing user memory}{24}{section*.6}
+\contentsline {section}{\numberline {3.2}Assignment}{25}{section.Appendix.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Argument Passing}{25}{subsection.Appendix.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}User memory access}{25}{subsection.Appendix.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}System calls}{25}{subsection.Appendix.3.2.3}
+\contentsline {subsubsection}{File Paths}{26}{section*.7}
+\contentsline {subsection}{\numberline {3.2.4}Handling user-mode exceptions}{27}{subsection.Appendix.3.2.4}
+\contentsline {section}{\numberline {3.3}Source Files}{27}{section.Appendix.3.3}
+\contentsline {section}{\numberline {3.4}FAQ}{28}{section.Appendix.3.4}
+\contentsline {chapter}{\numberline {4}Project 3: Virtual Memory}{31}{chapter.Appendix.4}
+\contentsline {section}{\numberline {4.1}Overview}{31}{section.Appendix.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Memory Terminology}{31}{subsection.Appendix.4.1.1}
+\contentsline {subsubsection}{Pages}{32}{section*.8}
+\contentsline {subsubsection}{Frames}{32}{section*.9}
+\contentsline {subsubsection}{Page Tables}{33}{section*.10}
+\contentsline {subsubsection}{Swap Slots}{33}{section*.11}
+\contentsline {subsection}{\numberline {4.1.2}Memory Management Initialization}{35}{subsection.Appendix.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Resource Management Overview}{35}{subsection.Appendix.4.1.3}
+\contentsline {subsubsection}{Managing the Supplemental Page Table}{36}{section*.12}
+\contentsline {subsubsection}{Managing the Frame Table}{37}{section*.13}
+\contentsline {subsubsection}{Managing the Swap Table}{37}{section*.14}
+\contentsline {section}{\numberline {4.2}Assignment}{38}{section.Appendix.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Per Process Quotas}{38}{subsection.Appendix.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}System calls}{38}{subsection.Appendix.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Swapping}{40}{subsection.Appendix.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}Zero Pages}{40}{subsection.Appendix.4.2.4}
+\contentsline {subsection}{\numberline {4.2.5}Stack Growth}{40}{subsection.Appendix.4.2.5}
+\contentsline {section}{\numberline {4.3}Source Files}{41}{section.Appendix.4.3}
+\contentsline {section}{\numberline {4.4}FAQ}{41}{section.Appendix.4.4}
+\contentsline {chapter}{\numberline {A}Reference Guide}{43}{Appendix.a.A}
+\contentsline {section}{\numberline {A.1}HAL9000}{43}{section.a.A.1}
+\contentsline {subsection}{\numberline {A.1.1}Startup}{43}{subsection.a.A.1.1}
+\contentsline {subsubsection}{Assembly code}{43}{section*.15}
+\contentsline {subsubsection}{C code}{43}{section*.16}
+\contentsline {subsubsection}{AP initialization}{45}{section*.17}
+\contentsline {subsection}{\numberline {A.1.2}Multi-core vs Single-core}{46}{subsection.a.A.1.2}
+\contentsline {subsection}{\numberline {A.1.3}Why 64-bit?}{46}{subsection.a.A.1.3}
+\contentsline {subsection}{\numberline {A.1.4}Interrupt Handling}{47}{subsection.a.A.1.4}
+\contentsline {subsubsection}{Interrupt Infrastructure}{48}{section*.18}
+\contentsline {subsubsection}{Internal Interrupt Handling}{49}{section*.19}
+\contentsline {subsubsection}{External Interrupt Handling}{49}{section*.20}
+\contentsline {section}{\numberline {A.2}Threads}{50}{section.a.A.2}
+\contentsline {subsection}{\numberline {A.2.1}Thread Structure}{50}{subsection.a.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}Thread Functions}{52}{subsection.a.A.2.2}
+\contentsline {subsection}{\numberline {A.2.3}Thread States}{57}{subsection.a.A.2.3}
+\contentsline {subsection}{\numberline {A.2.4}Thread Switching}{59}{subsection.a.A.2.4}
+\contentsline {subsection}{\numberline {A.2.5}Thread Initialization}{59}{subsection.a.A.2.5}
+\contentsline {subsubsection}{User-mode Threads}{60}{section*.21}
+\contentsline {section}{\numberline {A.3}Interprocessor Communication}{60}{section.a.A.3}
+\contentsline {subsection}{\numberline {A.3.1}Parameter overview}{61}{subsection.a.A.3.1}
+\contentsline {subsection}{\numberline {A.3.2}Usage Examples}{62}{subsection.a.A.3.2}
+\contentsline {section}{\numberline {A.4}Processes}{65}{section.a.A.4}
+\contentsline {subsection}{\numberline {A.4.1}Process Structure}{65}{subsection.a.A.4.1}
+\contentsline {subsection}{\numberline {A.4.2}Process functions}{66}{subsection.a.A.4.2}
+\contentsline {subsection}{\numberline {A.4.3}Program Startup}{70}{subsection.a.A.4.3}
+\contentsline {section}{\numberline {A.5}Synchronization}{71}{section.a.A.5}
+\contentsline {subsection}{\numberline {A.5.1}Primitive}{73}{subsection.a.A.5.1}
+\contentsline {subsubsection}{Locks}{73}{section*.22}
+\contentsline {subsubsection}{Event}{74}{section*.23}
+\contentsline {subsection}{\numberline {A.5.2}Executive}{76}{subsection.a.A.5.2}
+\contentsline {subsubsection}{Mutex}{76}{section*.24}
+\contentsline {subsubsection}{Executive Event}{77}{section*.25}
+\contentsline {subsubsection}{Executive Timer}{78}{section*.26}
+\contentsline {subsection}{\numberline {A.5.3}Interlocked Operations}{79}{subsection.a.A.5.3}
+\contentsline {subsection}{\numberline {A.5.4}Disabling Interrupts}{80}{subsection.a.A.5.4}
+\contentsline {section}{\numberline {A.6}Memory Management}{80}{section.a.A.6}
+\contentsline {subsection}{\numberline {A.6.1}Physical Memory Management}{81}{subsection.a.A.6.1}
+\contentsline {subsection}{\numberline {A.6.2}Virtual Memory Management}{81}{subsection.a.A.6.2}
+\contentsline {subsubsection}{Lazy Mapping}{82}{section*.27}
+\contentsline {subsection}{\numberline {A.6.3}Heap Management}{83}{subsection.a.A.6.3}
+\contentsline {subsection}{\numberline {A.6.4}Memory Management Unit}{83}{subsection.a.A.6.4}
+\contentsline {subsubsection}{Interface}{83}{section*.28}
+\contentsline {subsection}{\numberline {A.6.5}Page-fault handling}{84}{subsection.a.A.6.5}
+\contentsline {section}{\numberline {A.7}Virtual Addresses}{85}{section.a.A.7}
+\contentsline {section}{\numberline {A.8}Paging Tables}{87}{section.a.A.8}
+\contentsline {subsection}{\numberline {A.8.1}Creation, Destruction and Activation}{87}{subsection.a.A.8.1}
+\contentsline {subsection}{\numberline {A.8.2}Inspection and Updates}{88}{subsection.a.A.8.2}
+\contentsline {subsection}{\numberline {A.8.3}Accessed and Dirty Bits}{88}{subsection.a.A.8.3}
+\contentsline {section}{\numberline {A.9}List Structures}{89}{section.a.A.9}
+\contentsline {section}{\numberline {A.10}Hash Table}{90}{section.a.A.10}
+\contentsline {section}{\numberline {A.11}Hardware Timers}{94}{section.a.A.11}
+\contentsline {subsection}{\numberline {A.11.1}PIT Timer}{94}{subsection.a.A.11.1}
+\contentsline {subsection}{\numberline {A.11.2}RTC Timer}{95}{subsection.a.A.11.2}
+\contentsline {subsection}{\numberline {A.11.3}LAPIC Timer}{95}{subsection.a.A.11.3}
+\contentsline {chapter}{\numberline {B}Debugging}{97}{Appendix.a.B}
+\contentsline {section}{\numberline {B.1}Signaling function failure}{97}{section.a.B.1}
+\contentsline {subsection}{\numberline {B.1.1}Interpreting STATUS values}{98}{subsection.a.B.1.1}
+\contentsline {section}{\numberline {B.2}Logging}{99}{section.a.B.2}
+\contentsline {section}{\numberline {B.3}Asserts}{101}{section.a.B.3}
+\contentsline {section}{\numberline {B.4}Dissassembly}{101}{section.a.B.4}
+\contentsline {section}{\numberline {B.5}Halt debugging}{106}{section.a.B.5}
+\contentsline {chapter}{\numberline {C}Development Tools}{109}{Appendix.a.C}
+\contentsline {section}{\numberline {C.1}Setting Up the Environment for HAL9000 }{109}{section.a.C.1}
+\contentsline {subsection}{\numberline {C.1.1}Automatic Configuration}{110}{subsection.a.C.1.1}
+\contentsline {subsection}{\numberline {C.1.2}Virtual Network Creation}{111}{subsection.a.C.1.2}
+\contentsline {subsection}{\numberline {C.1.3}System Architecture}{112}{subsection.a.C.1.3}
+\contentsline {subsection}{\numberline {C.1.4}Troubleshooting}{115}{subsection.a.C.1.4}
+\contentsline {subsubsection}{HAL9000 VM not receiving an IP}{115}{section*.29}
+\contentsline {subsubsection}{HAL9000 VM TFTP open timeout}{116}{section*.30}
+\contentsline {subsubsection}{HAL9000 VM boot file not found}{117}{section*.31}
+\contentsline {section}{\numberline {C.2}Visual Studio}{117}{section.a.C.2}
+\contentsline {subsection}{\numberline {C.2.1}Keyboard Shortcuts}{118}{subsection.a.C.2.1}
+\contentsline {section}{\numberline {C.3}Hg}{120}{section.a.C.3}
+\contentsline {chapter}{\numberline {D}Coding Style}{121}{Appendix.a.D}
+\contentsline {section}{\numberline {D.1}Functional rules}{121}{section.a.D.1}
+\contentsline {section}{\numberline {D.2}Non-functional Rules}{122}{section.a.D.2}
+\contentsline {chapter}{Bibliography}{123}{chapter*.32}
