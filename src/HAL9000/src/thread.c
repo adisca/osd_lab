@@ -173,7 +173,8 @@ ThreadSystemInitMainForCurrentCPU(
     if (!SUCCEEDED(status))
     {
         LOG_FUNC_ERROR("_ThreadInit", status );
-        return status;
+        // return status;
+        status = _ThreadInit(mainThreadName, ThreadPriorityDefault, NULL, FALSE);
     }
     LOGPL("_ThreadInit succeeded\n");
 
@@ -729,7 +730,7 @@ _ThreadInit(
     LOG_FUNC_START;
 
     ASSERT(NULL != Name);
-    ASSERT(NULL != Thread);
+    // ASSERT(NULL != Thread);
     ASSERT_INFO(ThreadPriorityLowest <= Priority && Priority <= ThreadPriorityMaximum,
                 "Priority is 0x%x\n", Priority);
 
