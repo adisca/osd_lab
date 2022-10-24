@@ -471,3 +471,6 @@ gitignore/VisualStudio.gitignore at main · github/gitignore · GitHub
 *.exe
 *.out
 *.app
+
+VM
+PXE
