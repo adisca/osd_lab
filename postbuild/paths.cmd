@@ -12,6 +12,7 @@ set PATH_TO_VM_DISK=__EMPTY__
 set PATH_TO_VM_TOOLS=__EMPTY__
 set VOL_MOUNT_LETTER=__EMPTY__
 
+if _%COMPUTERNAME%_==_DESKTOP-QGSQ567_ goto config_DESKTOP-QGSQ567
 if _%COMPUTERNAME%_==_AGURZOU-DEV-PC_ goto config_AGURZOU-DEV
 if _%COMPUTERNAME%_==_ALEX-PC_ goto config_ALEX-PC
 if _%COMPUTERNAME%_==_AGURZOU-LPT_ goto config_AGURZOU-LPT
@@ -67,6 +68,15 @@ set PXE_PATH2=pxe-GRZ
 
 set BOCHS_PATH="c:\Program Files (x86)\Bochs-2.6.8\"
 
+goto end
+
+:config_DESKTOP-QGSQ567
+
+SET PATH_TO_LOG_FILE="C:\Faculta\An4\OSD\labs\VM\HAL9000_VM\HAL9000.log"
+SET PATH_TO_VM_DISK="C:\Faculta\An4\OSD\labs\VM\HAL9000_VM\HAL9000.vmdk"
+SET PXE_PATH="C:\Faculta\An4\OSD\labs\PXE"
+SET PATH_TO_VM_FILE="C:\Faculta\An4\OSD\labs\VM\HAL9000_VM\HAL9000.vmx"
+SET PATH_TO_VIX_TOOLS="C:\Program Files (x86)\VMware\VMware Workstation"
 goto end
 
 :end
