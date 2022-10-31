@@ -1,4 +1,0 @@
-[TEST]Will create 1 threads for running test [TestThreadTimerRelativeZero]
-[TEST]
-[PASS]
-[TEST]Thread [TestThreadTimerRelativeZero-00] terminated with status: 0x0
