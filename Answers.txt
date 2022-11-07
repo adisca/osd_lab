@@ -1,0 +1,15 @@
+1. a) IO
+b) CPU
+c) CPU
+d) IO
+
+2. IO
+
+3. CPU
+
+4. TickCountCompleted is incremented on each clock tick for the running thread.
+TickCountEarly is incremented if the thread yields the CPU before the clock ticks, i.e. by yielding or by blocking.
+
+IO bound has a higher value of TickCountEarly since they are blocked a lot by components outside of the cpu.
+
+5. Done. It doesn't say to do anything, so just take my word that I did it.

@@ -59,6 +59,18 @@ SystemPreinit(
     ProcessSystemPreinit();
 }
 
+static
+STATUS
+(__cdecl _HelloIpi)(
+    IN_OPT PVOID Context
+    )
+{
+    UNREFERENCED_PARAMETER(Context);
+
+    LOGP("Hello\n");
+    return STATUS_SUCCESS;
+}
+
 STATUS
 SystemInit(
     IN  ASM_PARAMETERS*     Parameters
@@ -313,8 +325,19 @@ SystemInit(
 
     LOGL("Network stack successfully initialized\n");
 
+    status = SmpSendGenericIpi(_HelloIpi, NULL, NULL, NULL, FALSE);
+    if (!SUCCEEDED(status))
+    {
+        LOG_FUNC_ERROR("SmpSendGenericIpi", status);
+        return status;
+    }
+
+    LOGL("Hello Ipi sent successfully\n");
+
     return status;
 }
+
+
 
 void
 SystemUninit(
