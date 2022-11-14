@@ -58,6 +58,10 @@ RemoveEntryList(
     PLIST_ENTRY Blink;
     PLIST_ENTRY Flink;
 
+    // NULL Protection should be here by default
+    if (Entry == NULL)
+        return FALSE;
+
 #ifdef DEBUG
     ASSERT(_ValidateListEntry(Entry));
 #endif

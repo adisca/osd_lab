@@ -52,26 +52,26 @@ C_HEADER_START
 #pragma pack(push,16)
 typedef struct _LIST_ENTRY
 {
-    struct _LIST_ENTRY*     Flink;
-    struct _LIST_ENTRY*     Blink;
-} LIST_ENTRY, *PLIST_ENTRY;
+	struct _LIST_ENTRY* Flink;
+	struct _LIST_ENTRY* Blink;
+} LIST_ENTRY, * PLIST_ENTRY;
 #pragma pack(pop)
 
 typedef struct _LIST_ITERATOR
 {
-    PLIST_ENTRY                 ListHead;
+	PLIST_ENTRY                 ListHead;
 
-    PLIST_ENTRY                 CurrentEntry;
-} LIST_ITERATOR, *PLIST_ITERATOR;
+	PLIST_ENTRY                 CurrentEntry;
+} LIST_ITERATOR, * PLIST_ITERATOR;
 
 typedef
 STATUS
 (__cdecl FUNC_ListFunction) (
-    IN      PLIST_ENTRY     ListEntry,
-    IN_OPT  PVOID           FunctionContext
-    );
+	IN      PLIST_ENTRY     ListEntry,
+	IN_OPT  PVOID           FunctionContext
+	);
 
-typedef FUNC_ListFunction*      PFUNC_ListFunction;
+typedef FUNC_ListFunction* PFUNC_ListFunction;
 
 //******************************************************************************
 // Function:     FUNC_CompareFunction
@@ -85,12 +85,12 @@ typedef FUNC_ListFunction*      PFUNC_ListFunction;
 typedef
 INT64
 (__cdecl FUNC_CompareFunction) (
-    IN      PLIST_ENTRY     FirstElem,
-    IN      PLIST_ENTRY     SecondElem,
-    IN_OPT  PVOID           Context
-    );
+	IN      PLIST_ENTRY     FirstElem,
+	IN      PLIST_ENTRY     SecondElem,
+	IN_OPT  PVOID           Context
+	);
 
-typedef FUNC_CompareFunction*   PFUNC_CompareFunction;
+typedef FUNC_CompareFunction* PFUNC_CompareFunction;
 
 //******************************************************************************
 // Function:     InitializeListHead
@@ -102,8 +102,8 @@ typedef FUNC_CompareFunction*   PFUNC_CompareFunction;
 //******************************************************************************
 void
 InitializeListHead(
-    OUT     PLIST_ENTRY ListHead
-    );
+	OUT     PLIST_ENTRY ListHead
+);
 
 
 //******************************************************************************
@@ -114,8 +114,8 @@ InitializeListHead(
 //******************************************************************************
 BOOLEAN
 IsListEmpty(
-    IN      PLIST_ENTRY ListHead
-    );
+	IN      PLIST_ENTRY ListHead
+);
 
 //******************************************************************************
 // Function:     IsListEmptyDirty
@@ -128,10 +128,10 @@ IsListEmpty(
 __forceinline
 BOOLEAN
 IsListEmptyDirty(
-    IN      PLIST_ENTRY ListHead
-    )
+	IN      PLIST_ENTRY ListHead
+)
 {
-    return (BOOLEAN)(ListHead->Flink == ListHead);
+	return (BOOLEAN)(ListHead->Flink == ListHead);
 }
 
 //******************************************************************************
@@ -142,8 +142,8 @@ IsListEmptyDirty(
 //******************************************************************************
 BOOLEAN
 RemoveEntryList(
-    INOUT   PLIST_ENTRY Entry
-    );
+	INOUT   PLIST_ENTRY Entry
+);
 
 //******************************************************************************
 // Function:     RemoveHeadList
@@ -154,8 +154,8 @@ RemoveEntryList(
 //******************************************************************************
 PLIST_ENTRY
 RemoveHeadList(
-    INOUT   PLIST_ENTRY ListHead
-    );
+	INOUT   PLIST_ENTRY ListHead
+);
 
 //******************************************************************************
 // Function:     RemoveTailList
@@ -166,8 +166,8 @@ RemoveHeadList(
 //******************************************************************************
 PLIST_ENTRY
 RemoveTailList(
-    INOUT   PLIST_ENTRY ListHead
-    );
+	INOUT   PLIST_ENTRY ListHead
+);
 
 //******************************************************************************
 // Function:     InsertTailList
@@ -178,9 +178,9 @@ RemoveTailList(
 //******************************************************************************
 void
 InsertTailList(
-    INOUT   PLIST_ENTRY ListHead,
-    INOUT   PLIST_ENTRY Entry
-    );
+	INOUT   PLIST_ENTRY ListHead,
+	INOUT   PLIST_ENTRY Entry
+);
 
 //******************************************************************************
 // Function:     InsertHeadList
@@ -191,9 +191,9 @@ InsertTailList(
 //******************************************************************************
 void
 InsertHeadList(
-    INOUT   PLIST_ENTRY ListHead,
-    INOUT   PLIST_ENTRY Entry
-    );
+	INOUT   PLIST_ENTRY ListHead,
+	INOUT   PLIST_ENTRY Entry
+);
 
 //******************************************************************************
 // Function:     InsertOrderedList
@@ -206,11 +206,11 @@ InsertHeadList(
 //******************************************************************************
 void
 InsertOrderedList(
-    INOUT   PLIST_ENTRY             ListHead,
-    INOUT   PLIST_ENTRY             Entry,
-    IN      PFUNC_CompareFunction   CompareFunction,
-    IN_OPT  PVOID                   Context
-    );
+	INOUT   PLIST_ENTRY             ListHead,
+	INOUT   PLIST_ENTRY             Entry,
+	IN      PFUNC_CompareFunction   CompareFunction,
+	IN_OPT  PVOID                   Context
+);
 
 //******************************************************************************
 // Function:     GetListElemByIndex
@@ -223,9 +223,9 @@ InsertOrderedList(
 PTR_SUCCESS
 PLIST_ENTRY
 GetListElemByIndex(
-    IN      PLIST_ENTRY ListHead,
-    IN      DWORD       ListIndex
-    );
+	IN      PLIST_ENTRY ListHead,
+	IN      DWORD       ListIndex
+);
 
 //******************************************************************************
 // Function:     ListSize
@@ -239,8 +239,8 @@ GetListElemByIndex(
 SIZE_SUCCESS
 DWORD
 ListSize(
-    IN      PLIST_ENTRY ListHead
-    );
+	IN      PLIST_ENTRY ListHead
+);
 
 //******************************************************************************
 // Function:      ForEachElementExecute
@@ -256,11 +256,11 @@ ListSize(
 //******************************************************************************
 STATUS
 ForEachElementExecute(
-    IN      PLIST_ENTRY             ListHead,
-    IN      PFUNC_ListFunction      Function,
-    IN_OPT  PVOID                   Context,
-    IN      BOOLEAN                 AllMustSucceed
-    );
+	IN      PLIST_ENTRY             ListHead,
+	IN      PFUNC_ListFunction      Function,
+	IN_OPT  PVOID                   Context,
+	IN      BOOLEAN                 AllMustSucceed
+);
 
 //******************************************************************************
 // Function:     ListSearchForElement
@@ -274,21 +274,21 @@ ForEachElementExecute(
 PTR_SUCCESS
 PLIST_ENTRY
 ListSearchForElement(
-    IN      PLIST_ENTRY             ListHead,
-    IN      PLIST_ENTRY             ElementToSearchFor,
-    IN      BOOLEAN                 IsListOrdered,
-    IN      PFUNC_CompareFunction   CompareFunction,
-    IN_OPT  PVOID                   Context
-    );
+	IN      PLIST_ENTRY             ListHead,
+	IN      PLIST_ENTRY             ElementToSearchFor,
+	IN      BOOLEAN                 IsListOrdered,
+	IN      PFUNC_CompareFunction   CompareFunction,
+	IN_OPT  PVOID                   Context
+);
 
 void
 ListIteratorInit(
-    IN      PLIST_ENTRY         List,
-    OUT     PLIST_ITERATOR      ListIterator
-    );
+	IN      PLIST_ENTRY         List,
+	OUT     PLIST_ITERATOR      ListIterator
+);
 
 PLIST_ENTRY
 ListIteratorNext(
-    INOUT   PLIST_ITERATOR      ListIterator
-    );
+	INOUT   PLIST_ITERATOR      ListIterator
+);
 C_HEADER_END

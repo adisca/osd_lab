@@ -55,12 +55,20 @@ MutexAcquire(
 
     while (Mutex->Holder != pCurrentThread)
     {
+        // priority donation
+        pCurrentThread->WaitedMutex = Mutex;
+        ThreadDonatePriority(Mutex->Holder, pCurrentThread);
+
         InsertTailList(&Mutex->WaitingList, &pCurrentThread->ReadyList);
         ThreadTakeBlockLock();
         LockRelease(&Mutex->MutexLock, dummyState);
         ThreadBlock();
-        LockAcquire(&Mutex->MutexLock, &dummyState );
+        LockAcquire(&Mutex->MutexLock, &dummyState);
     }
+
+    //priority donation
+    pCurrentThread->WaitedMutex = NULL;
+    InsertTailList(&pCurrentThread->AcquiredMutexesList, &Mutex->AcqiredMutexListElem);
 
     _Analysis_assume_lock_acquired_(*Mutex);
 
@@ -91,6 +99,10 @@ MutexRelease(
     pEntry = NULL;
 
     LockAcquire(&Mutex->MutexLock, &oldState);
+
+    // priority donation
+    RemoveEntryList(&Mutex->AcqiredMutexListElem);
+    ThreadRecomputePriority(GetCurrentThread());
 
     pEntry = RemoveHeadList(&Mutex->WaitingList);
     if (pEntry != &Mutex->WaitingList)

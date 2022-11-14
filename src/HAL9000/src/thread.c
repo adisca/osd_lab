@@ -658,9 +658,20 @@ ThreadSetPriority(
     IN      THREAD_PRIORITY     NewPriority
     )
 {
+    PTHREAD curThread;
+    INTR_STATE dummyState;
+
     ASSERT(ThreadPriorityLowest <= NewPriority && NewPriority <= ThreadPriorityMaximum);
 
-    GetCurrentThread()->Priority = NewPriority;
+    curThread = GetCurrentThread();
+    curThread->RealPriority = NewPriority;
+    // priority donation
+    
+    LockAcquire(&curThread->PrioLock, &dummyState);
+    if (curThread->RealPriority > curThread->Priority) {
+        curThread->Priority = curThread->RealPriority;
+    }
+    LockRelease(&curThread->PrioLock, dummyState);
 }
 
 STATUS
@@ -793,6 +804,12 @@ _ThreadInit(
         pThread->Id = _ThreadSystemGetNextTid();
         pThread->State = ThreadStateBlocked;
         pThread->Priority = Priority;
+
+        // priority donation
+        pThread->RealPriority = Priority;
+        InitializeListHead(&pThread->AcquiredMutexesList);
+        pThread->WaitedMutex = NULL;
+        LockInit(&pThread->PrioLock);
 
         LockInit(&pThread->BlockLock);
 
@@ -1238,4 +1255,80 @@ _ThreadKernelFunction(
 
     ThreadExit(exitStatus);
     NOT_REACHED;
+}
+
+// priority donation
+
+void
+ThreadDonatePriority
+(
+    IN PTHREAD                      pThreadMuxHolder,
+    IN PTHREAD                      pThreadDonor
+)
+{
+    INTR_STATE dummyState;
+    PTHREAD MuxHolder;
+    MuxHolder = pThreadMuxHolder;
+
+    LockAcquire(&pThreadMuxHolder->PrioLock, &dummyState);
+    if (ThreadGetPriority(pThreadDonor) > ThreadGetPriority(MuxHolder))
+    {
+        MuxHolder->Priority = pThreadDonor->Priority;
+    }
+    LockRelease(&pThreadMuxHolder->PrioLock, dummyState);
+
+    while (MuxHolder->WaitedMutex != NULL && MuxHolder->WaitedMutex->Holder != NULL)
+    {
+        MuxHolder = MuxHolder->WaitedMutex->Holder;
+        LockAcquire(&pThreadMuxHolder->PrioLock, &dummyState);
+        if (ThreadGetPriority(pThreadDonor) > ThreadGetPriority(MuxHolder))
+        {
+            MuxHolder->Priority = pThreadDonor->Priority;
+        }
+        LockRelease(&pThreadMuxHolder->PrioLock, dummyState);
+    }
+}
+
+void
+ThreadRecomputePriority
+(
+    IN PTHREAD                      pThread
+)
+{
+    PLIST_ENTRY elem1, elem2;
+    THREAD_PRIORITY maxPriority;
+    PMUTEX mutex;
+    PTHREAD thread;
+    INTR_STATE dummyState;
+    INTR_STATE oldState;
+
+    maxPriority = pThread->RealPriority;
+
+    for (
+        elem1 = (&pThread->AcquiredMutexesList)->Flink;
+        elem1 != (&pThread->AcquiredMutexesList);
+        elem1 = elem1->Flink
+        )
+    {
+        mutex = CONTAINING_RECORD(elem1, MUTEX, AcqiredMutexListElem);
+
+        LockAcquire(&mutex->MutexLock, &oldState);
+        for (
+            elem2 = (&mutex->WaitingList)->Flink;
+            elem2 != (&mutex->WaitingList);
+            elem2 = elem2->Flink
+            )
+        {
+            thread = CONTAINING_RECORD(elem2, THREAD, ReadyList);
+            LockAcquire(&thread->PrioLock, &dummyState);
+            if (ThreadGetPriority(thread) > maxPriority)
+                maxPriority = thread->Priority;
+            LockRelease(&thread->PrioLock, dummyState);
+        }
+        LockRelease(&mutex->MutexLock, oldState);
+    }
+
+    LockAcquire(&pThread->PrioLock, &dummyState);
+    pThread->Priority = maxPriority;
+    LockRelease(&pThread->PrioLock, dummyState);
 }

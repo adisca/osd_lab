@@ -13,6 +13,10 @@ typedef struct _MUTEX
     _Guarded_by_(MutexLock)
     LIST_ENTRY          WaitingList;
     struct _THREAD*     Holder;
+
+    // priority donation
+    LIST_ENTRY          AcqiredMutexListElem;
+
 } MUTEX, *PMUTEX;
 
 //******************************************************************************
@@ -59,4 +63,4 @@ REQUIRES_EXCL_LOCK(*Mutex)
 void
 MutexRelease(
     INOUT       PMUTEX      Mutex
-    );
+);

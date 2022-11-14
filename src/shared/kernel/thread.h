@@ -119,3 +119,17 @@ THREAD_PRIORITY
 ThreadGetPriority(
     IN_OPT  PTHREAD             Thread
     );
+
+// priority donation
+void
+ThreadDonatePriority
+(
+    IN PTHREAD                      pThreadMuxHolder,
+    IN PTHREAD                      pThreadDonor
+);
+
+void
+ThreadRecomputePriority
+(
+    IN PTHREAD                      pThread
+);
