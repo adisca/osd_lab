@@ -5,6 +5,8 @@
 
 typedef struct _FILE_OBJECT *PFILE_OBJECT;
 
+typedef struct _VMM_RESERVATION* PVMM_RESERVATION;
+
 typedef struct _VMM_RESERVATION_SPACE
 {
     // Because we have an effectively infinite virtual address space

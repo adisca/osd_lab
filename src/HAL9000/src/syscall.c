@@ -7,6 +7,8 @@
 #include "mmu.h"
 #include "process_internal.h"
 #include "dmp_cpu.h"
+#include "vmm.h"
+#include "vm_reservation_space.h"
 
 extern void SyscallEntry();
 
@@ -61,6 +63,9 @@ SyscallHandler(
         // The first parameter is the system call ID, we don't care about it => +1
         pSyscallParameters = (PQWORD)usermodeProcessorState->RegisterValues[RegisterRbp] + 1;
 
+        PDWORD PagesCommitted = NULL;
+        PDWORD PagesReserved = NULL;
+
         // Dispatch syscalls
         switch (sysCallId)
         {
@@ -68,6 +73,10 @@ SyscallHandler(
             status = SyscallValidateInterface((SYSCALL_IF_VERSION)*pSyscallParameters);
             break;
         // STUDENT TODO: implement the rest of the syscalls
+        case SyscallIdProcessGetNumberOfPages:
+            status = SyscallProcessGetNumberOfPages(PagesCommitted, PagesReserved);
+            // printf, LOG or whatever PagesCommitted and PagesReserved
+            break;
         default:
             LOG_ERROR("Unimplemented syscall called from User-space!\n");
             status = STATUS_UNSUPPORTED;
@@ -170,3 +179,24 @@ SyscallValidateInterface(
 }
 
 // STUDENT TODO: implement the rest of the syscalls
+
+STATUS
+SyscallProcessGetNumberOfPages(
+    OUT     DWORD* PagesCommitted,
+    OUT     DWORD* PagesReserved
+)
+{
+    PVMM_RESERVATION_SPACE pResSpace;
+    PVMM_RESERVATION pCurrentReservation;
+
+    pResSpace = VmmRetrieveReservationSpaceForSystemProcess();
+
+    for (pCurrentReservation = pResSpace->ReservationList;
+        VmmReservationStateLast != pCurrentReservation->State &&
+        (PVOID)pCurrentReservation < pResSpace->BitmapAddressStart;
+        pCurrentReservation = pCurrentReservation + 1
+        )
+    {
+
+    }
+}

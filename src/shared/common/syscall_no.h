@@ -21,6 +21,7 @@ typedef enum _SYSCALL_ID
     // Memory management 
     SyscallIdVirtualAlloc,
     SyscallIdVirtualFree,
+    SyscallIdProcessGetNumberOfPages,
 
     // File management
     SyscallIdFileCreate,

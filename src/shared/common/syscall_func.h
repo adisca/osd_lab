@@ -306,3 +306,9 @@ SyscallFileWrite(
     IN  QWORD                       BytesToWrite,
     OUT QWORD*                      BytesWritten
     );
+
+STATUS
+SyscallProcessGetNumberOfPages(
+    OUT     DWORD* PagesCommitted,
+    OUT     DWORD* PagesReserved
+);
