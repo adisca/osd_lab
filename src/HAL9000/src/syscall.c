@@ -7,6 +7,8 @@
 #include "mmu.h"
 #include "process_internal.h"
 #include "dmp_cpu.h"
+#include "thread.h"
+#include "thread_internal.h"
 
 extern void SyscallEntry();
 
@@ -65,9 +67,34 @@ SyscallHandler(
         switch (sysCallId)
         {
         case SyscallIdIdentifyVersion:
+            LOG_ERROR("SyscallIdIdentifyVersion");
             status = SyscallValidateInterface((SYSCALL_IF_VERSION)*pSyscallParameters);
             break;
         // STUDENT TODO: implement the rest of the syscalls
+        //case SyscallIdThreadExit:
+        //    LOG_ERROR("SyscallIdThreadExit");
+        //    status = SyscallThreadExit((DWORD)pSyscallParameters[0]);
+        //    break;
+        case SyscallIdThreadCreate:
+            LOG_ERROR("SyscallIdThreadCreate");
+            status = SyscallThreadCreate((PFUNC_ThreadStart)pSyscallParameters[0], (PVOID)pSyscallParameters[1], (UM_HANDLE*)pSyscallParameters[2]);
+            break;
+        //case SyscallIdThreadGetTid:
+        //    LOG_ERROR("SyscallIdThreadGetTid");
+        //    status = SyscallThreadGetTid((UM_HANDLE)pSyscallParameters[0], (TID *)pSyscallParameters[1]);
+        //    break;
+        //case SyscallIdThreadWaitForTermination:
+        //    LOG_ERROR("SyscallIdThreadWaitForTermination");
+        //    status = SyscallThreadWaitForTermination((UM_HANDLE)pSyscallParameters[0], (STATUS*)pSyscallParameters[1]);
+        //    break;
+        //case SyscallIdThreadCloseHandle:
+        //    LOG_ERROR("SyscallIdThreadCloseHandle");
+        //    status = SyscallThreadCloseHandle((UM_HANDLE)pSyscallParameters[0]);
+        //    break;
+        //case SyscallIdFileWrite:
+        //    LOG_ERROR("SyscallIdFileWrite");
+        //    status = SyscallFileWrite((UM_HANDLE)pSyscallParameters[0], (PVOID)pSyscallParameters[1], (QWORD)pSyscallParameters[2], (QWORD*)pSyscallParameters[3]);
+        //    break;
         default:
             LOG_ERROR("Unimplemented syscall called from User-space!\n");
             status = STATUS_UNSUPPORTED;
@@ -170,3 +197,281 @@ SyscallValidateInterface(
 }
 
 // STUDENT TODO: implement the rest of the syscalls
+
+typedef enum _UM_HANDLE_DATA_TYPES {
+
+    FileHandle,
+    ProcessHandle,
+    ThreadHandle,
+    
+    // Not an actual value, just for getting the size of this enum
+    // Please keep it as the last entry
+    _TotalHandleTypes
+} UM_HANDLE_TYPE;
+
+#define HANDLE_MAP_MAX_ENTRIES      1000 * _TotalHandleTypes
+PVOID HandleMap[HANDLE_MAP_MAX_ENTRIES];
+
+// Handle manager
+
+STATUS
+UMInitialize
+(
+    void
+)
+{
+    for (int i = 0; i < HANDLE_MAP_MAX_ENTRIES; i++) {
+        HandleMap[i] = NULL;
+    }
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+UMCreate(
+    IN      UM_HANDLE_TYPE          HandleType,
+    IN      PVOID                   p,
+    OUT     UM_HANDLE*              handle
+)
+{
+    ASSERT(HandleType >= 0);
+    ASSERT(HandleType < _TotalHandleTypes);
+
+    UM_HANDLE i = HandleType;
+
+    while (i < HANDLE_MAP_MAX_ENTRIES && HandleMap[i] != NULL)
+    {
+        i += _TotalHandleTypes;
+    }
+
+    if (i >= HANDLE_MAP_MAX_ENTRIES)
+        // Placeholder, send status for filled table
+        return STATUS_INVALID_POINTER;
+
+    HandleMap[i] = p;
+    *handle = i + 1;
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+UMCreateThread(
+    IN      PTHREAD                 pThread,
+    OUT     UM_HANDLE*              handle
+)
+{
+    return UMCreate(ThreadHandle, (PVOID)pThread, handle);
+}
+
+STATUS
+UMGet(
+    IN      UM_HANDLE_TYPE          HandleType,
+    IN      UM_HANDLE               handle,
+    OUT     PVOID*                  p
+)
+{
+
+    ASSERT(HandleType >= 0);
+    ASSERT(HandleType < _TotalHandleTypes);
+
+    if ((handle - 1) % _TotalHandleTypes != HandleType || (handle - 1) >= HANDLE_MAP_MAX_ENTRIES || (handle - 1) < 0)
+        // Placeholder, invalid handle
+        return STATUS_INVALID_POINTER;
+
+    if (HandleMap[(handle - 1)] == NULL)
+        // Placeholder, handle is either not created or closed
+        return STATUS_INVALID_POINTER;
+
+    *p = HandleMap[(handle - 1)];
+
+    return STATUS_SUCCESS;
+}
+
+STATUS 
+UMGetThread(
+    IN      UM_HANDLE               handle,
+    OUT     PTHREAD*                pThread
+)
+{
+    PVOID p = NULL;
+    STATUS status;
+
+    status = UMGet(ThreadHandle, handle, p);
+    
+    *pThread = (PTHREAD)p;
+    return status;
+}
+
+STATUS
+UMCloseHandle(
+    IN      UM_HANDLE_TYPE          HandleType,
+    IN      UM_HANDLE               handle
+)
+{
+    ASSERT(HandleType >= 0);
+    ASSERT(HandleType < _TotalHandleTypes);
+
+    if ((handle - 1) % _TotalHandleTypes != HandleType || (handle - 1) >= HANDLE_MAP_MAX_ENTRIES || (handle - 1) < 0)
+        // Placeholder, invalid handle
+        return STATUS_INVALID_POINTER;
+
+    if (HandleMap[(handle - 1)] == NULL)
+        // Placeholder, handle is either not created or closed
+        return STATUS_INVALID_POINTER;
+
+    HandleMap[(handle - 1)] = NULL;
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+UMCloseThreadHandle(
+    IN      UM_HANDLE               handle
+)
+{
+    return UMCloseHandle(ThreadHandle, handle);
+}
+
+STATUS
+SyscallThreadCreate(
+    IN      PFUNC_ThreadStart       StartFunction,
+    IN_OPT  PVOID                   Context,
+    OUT     UM_HANDLE*              ThreadHandle
+)
+{
+    PTHREAD pThread = (PTHREAD)ExAllocatePoolWithTag(PoolAllocateZeroMemory, sizeof(THREAD), HEAP_THREAD_TAG, 0);
+    STATUS status;
+
+
+    if (ThreadHandle == NULL) {
+        ThreadHandle = ExAllocatePoolWithTag(PoolAllocateZeroMemory, sizeof(UM_HANDLE), HEAP_IDT_TAG, 0);
+    }
+    else {
+        status = MmuIsBufferValid((PVOID)ThreadHandle, sizeof(ThreadHandle), PAGE_RIGHTS_WRITE, GetCurrentProcess());
+        if (status != STATUS_SUCCESS) {
+            return STATUS_INVALID_POINTER;
+        }
+    }
+
+    if (StartFunction == NULL) {
+        return STATUS_INVALID_POINTER;
+    }
+
+    status = MmuIsBufferValid((PVOID)StartFunction, sizeof(StartFunction), PAGE_RIGHTS_ALL, GetCurrentProcess());
+    if (status != STATUS_SUCCESS) {
+        return STATUS_INVALID_POINTER;
+    }
+
+    if (Context != NULL) {
+        status = MmuIsBufferValid((PVOID)Context, sizeof(Context), PAGE_RIGHTS_ALL, GetCurrentProcess());
+        if (status != STATUS_SUCCESS) {
+            return STATUS_INVALID_POINTER;
+        }
+    }
+
+    status = ThreadCreate("SomeName", ThreadPriorityDefault, StartFunction, Context, &pThread);
+    if (status != STATUS_SUCCESS) {
+        return status;
+    }
+
+    status = UMCreateThread(pThread, ThreadHandle);
+
+    return status;
+}
+
+STATUS
+SyscallThreadExit(
+    IN      STATUS                  ExitStatus
+)
+{
+    ThreadExit(ExitStatus);
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+SyscallThreadGetTid(
+    IN_OPT  UM_HANDLE               ThreadHandle,
+    OUT     TID*                    ThreadId
+)
+{
+    PTHREAD pThread = NULL;
+    STATUS status;
+
+    if (ThreadId == NULL) {
+        ThreadId = ExAllocatePoolWithTag(PoolAllocateZeroMemory, sizeof(TID), HEAP_IDT_TAG, 0);
+    }
+    else {
+        status = MmuIsBufferValid((PVOID)ThreadId, sizeof(ThreadId), PAGE_RIGHTS_ALL, GetCurrentProcess());
+        if (status != STATUS_SUCCESS) {
+            return STATUS_INVALID_POINTER;
+        }
+    }
+
+    if (ThreadHandle == UM_INVALID_HANDLE_VALUE)
+        pThread = GetCurrentThread();
+    else {
+        status = UMGetThread(ThreadHandle, &pThread);
+        if (status != STATUS_SUCCESS)
+            return status;
+    }
+
+    *ThreadId = ThreadGetId(pThread);
+
+    // This might not be needed, otherwise the error status is subject to change
+    return (ThreadId != 0) ? STATUS_SUCCESS : STATUS_INVALID_POINTER;
+}
+
+STATUS
+SyscallThreadWaitForTermination(
+    IN      UM_HANDLE               ThreadHandle,
+    OUT     STATUS*                 TerminationStatus
+)
+{
+    PTHREAD pThread = NULL;
+    STATUS status;
+
+    status = UMGetThread(ThreadHandle, &pThread);
+    if (status != STATUS_SUCCESS) {
+        return status;
+    }
+
+    if (TerminationStatus == NULL) {
+        TerminationStatus = ExAllocatePoolWithTag(PoolAllocateZeroMemory, sizeof(TID), HEAP_IDT_TAG, 0);
+    }
+    else {
+        status = MmuIsBufferValid((PVOID)TerminationStatus, sizeof(TerminationStatus), PAGE_RIGHTS_ALL, GetCurrentProcess());
+        if (status != STATUS_SUCCESS) {
+            return STATUS_INVALID_POINTER;
+        }
+    }
+
+    ThreadWaitForTermination(pThread, TerminationStatus);
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+SyscallThreadCloseHandle(
+    IN      UM_HANDLE               ThreadHandle
+)
+{
+    return UMCloseThreadHandle(ThreadHandle);
+}
+
+STATUS
+SyscallFileWrite(
+    IN  UM_HANDLE                   FileHandle,
+    IN_READS_BYTES(BytesToWrite)
+    PVOID                           Buffer,
+    IN  QWORD                       BytesToWrite,
+    OUT QWORD*                      BytesWritten
+)
+{
+    if (Buffer != NULL)
+        *BytesWritten = BytesToWrite;
+
+    LOG("[%s]:[%s]\n", ProcessGetName(NULL), Buffer);
+
+    return STATUS_SUCCESS;
+}
