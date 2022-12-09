@@ -1,29 +1,87 @@
-[Args.exe]:[Successfully validated the interface!]
-[Args.exe]:[Number of arguments 0x1A]
-[Args.exe]:[Argument[0] is [Args.exe]]
-[Args.exe]:[Argument[1] is [a]]
-[Args.exe]:[Argument[2] is [b]]
-[Args.exe]:[Argument[3] is [c]]
-[Args.exe]:[Argument[4] is [d]]
-[Args.exe]:[Argument[5] is [e]]
-[Args.exe]:[Argument[6] is [f]]
-[Args.exe]:[Argument[7] is [g]]
-[Args.exe]:[Argument[8] is [h]]
-[Args.exe]:[Argument[9] is [i]]
-[Args.exe]:[Argument[10] is [j]]
-[Args.exe]:[Argument[11] is [k]]
-[Args.exe]:[Argument[12] is [l]]
-[Args.exe]:[Argument[13] is [m]]
-[Args.exe]:[Argument[14] is [n]]
-[Args.exe]:[Argument[15] is [o]]
-[Args.exe]:[Argument[16] is [p]]
-[Args.exe]:[Argument[17] is [r]]
-[Args.exe]:[Argument[18] is [s]]
-[Args.exe]:[Argument[19] is [t]]
-[Args.exe]:[Argument[20] is [u]]
-[Args.exe]:[Argument[21] is [v]]
-[Args.exe]:[Argument[22] is [q]]
-[Args.exe]:[Argument[23] is [x]]
-[Args.exe]:[Argument[24] is [y]]
-[Args.exe]:[Argument[25] is [z]]
-[Args.exe]:[Returned from main function, will call ThreadExit with status 0x0!]
+[ERROR][isr.c][153]Could not handle exception 0xE [#PF - Page-Fault Exception]
+
+Interrupt stack:
+Error code: 0x6
+RIP: 0x140003490
+CS: 0x4B
+RFLAGS: 0x10202
+RSP: 0x18000A000
+SS: 0x53
+
+Control registers:
+CR0: 0x80010031
+CR2: 0x18000A010
+CR3: 0x5BF002
+CR4: 0x120020
+CR8: 0x0
+
+Processor State:
+RAX: 0x2
+RCX: 0x1A
+RDX: 0x18000A028
+RBX: 0x0
+RSP: 0xCCCCCCCCCCCCCCCC
+RBP: 0x0
+RSI: 0x1A
+RDI: 0x18000A028
+R8: 0xFFFF8501C9D81DF8
+R9: 0xFFFF8000010CE483
+R10: 0x0
+R11: 0x2
+R12: 0x0
+R13: 0x0
+R14: 0x0
+R15: 0x0
+RIP: 0x140003490
+Rflags: 0x4B
+Faulting stack data:
+[0xFFFF8501C9D7A000]: 0x0
+[0xFFFF8501C9D7A008]: 0x0
+[0xFFFF8501C9D7A010]: 0x0
+[0xFFFF8501C9D7A018]: 0x0
+[0xFFFF8501C9D7A020]: 0x0
+[0xFFFF8501C9D7A028]: 0x0
+[0xFFFF8501C9D7A030]: 0x0
+[0xFFFF8501C9D7A038]: 0x0
+[0xFFFF8501C9D7A040]: 0x0
+[0xFFFF8501C9D7A048]: 0x0
+[0xFFFF8501C9D7A050]: 0x0
+[0xFFFF8501C9D7A058]: 0x0
+[0xFFFF8501C9D7A060]: 0x0
+[0xFFFF8501C9D7A068]: 0x0
+[0xFFFF8501C9D7A070]: 0x0
+[0xFFFF8501C9D7A078]: 0x0
+[0xFFFF8501C9D7A080]: 0x0
+[0xFFFF8501C9D7A088]: 0x0
+[0xFFFF8501C9D7A090]: 0x0
+[0xFFFF8501C9D7A098]: 0x0
+[0xFFFF8501C9D7A0A0]: 0x0
+[0xFFFF8501C9D7A0A8]: 0x0
+[0xFFFF8501C9D7A0B0]: 0x0
+[0xFFFF8501C9D7A0B8]: 0x0
+[0xFFFF8501C9D7A0C0]: 0x0
+[0xFFFF8501C9D7A0C8]: 0x0
+[0xFFFF8501C9D7A0D0]: 0x0
+[0xFFFF8501C9D7A0D8]: 0x0
+[0xFFFF8501C9D7A0E0]: 0x0
+[0xFFFF8501C9D7A0E8]: 0x0
+[0xFFFF8501C9D7A0F0]: 0x0
+[0xFFFF8501C9D7A0F8]: 0x0
+[ERROR][hal_assert.c][24][CPU:00]Sending IPI to other processors
+[ERROR][hal_assert.c][29][CPU:00]Kernel panic!
+[ERROR][hal_assert.c][31][CPU:00]Thread: [Test]
+[ERROR][hal_assert.c][33][CPU:00][ASSERT][isr.c][175]Condition: (exceptionHandled) failed
+Exception 0xE was not handled
+
+[ERROR][hal_assert.c][29][CPU:03]Kernel panic!
+[ERROR][hal_assert.c][31][CPU:03]Thread: [idle-03]
+[ERROR][hal_assert.c][33][CPU:03]Received ASSERT IPI
+
+[ERROR][hal_assert.c][29][CPU:02]Kernel panic!
+[ERROR][hal_assert.c][31][CPU:02]Thread: [idle-02]
+[ERROR][hal_assert.c][33][CPU:02]Received ASSERT IPI
+
+[ERROR][hal_assert.c][29][CPU:01]Kernel panic!
+[ERROR][hal_assert.c][31][CPU:01]Thread: [idle-01]
+[ERROR][hal_assert.c][33][CPU:01]Received ASSERT IPI
+
