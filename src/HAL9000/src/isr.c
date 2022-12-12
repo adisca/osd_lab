@@ -120,7 +120,7 @@ _IsrExceptionHandler(
 
             pCpu = GetCurrentPcpu();
             if (NULL != pCpu)
-            {
+            {   
                 BYTE* pStackBottom;
 
                 pStackBottom = (BYTE*)pCpu->StackTop - pCpu->StackSize;
@@ -129,11 +129,11 @@ _IsrExceptionHandler(
                 {
                     // memory accessed is directly below the stack (in the unmapped stack guard area)
                     LOG_ERROR("Stack overflow\n"
-                              "Stack in range [0x%X, 0x%X]\n"
-                              "#PF is at 0x%X\n",
-                              pStackBottom, pCpu->StackTop,
-                              pfAddr
-                              );
+                        "Stack in range [0x%X, 0x%X]\n"
+                        "#PF is at 0x%X\n",
+                        pStackBottom, pCpu->StackTop,
+                        pfAddr
+                    );
                 }
             }
         }
@@ -146,6 +146,12 @@ _IsrExceptionHandler(
     // no use in logging if we solved the problem
     if (!exceptionHandled)
     {
+        if (!GdtIsSegmentPrivileged((WORD)StackPointer->Registers.CS))
+        {
+            ProcessTerminate(NULL);
+            LOG_ERROR("Killed process in _IsrExceptionHandler.\n");
+        }
+
         PVOID* pCurrentStackItem;
         DWORD noOfStackElementsToDump;
         PPCPU pCpu;

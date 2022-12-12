@@ -1,0 +1,8 @@
+Comparing files C:\FACULTA\AN4\OSD\HAL9000\SRC\..\TESTS\USERPROG\ARGUMENTS\TestUserArgsNone.result and C:\FACULTA\AN4\OSD\HAL9000\SRC\..\TESTS\USERPROG\ARGUMENTS\TESTUSERARGSNONE.TEST
+***** C:\FACULTA\AN4\OSD\HAL9000\SRC\..\TESTS\USERPROG\ARGUMENTS\TestUserArgsNone.result
+***** C:\FACULTA\AN4\OSD\HAL9000\SRC\..\TESTS\USERPROG\ARGUMENTS\TESTUSERARGSNONE.TEST
+[Args.exe]:[Argument[0] is [Args.exe]]
+[Args.exe]:[Returned from main function, will call ThreadExit with status 0x0!]
+*****
+
+[FAIL]
