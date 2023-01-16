@@ -9,6 +9,8 @@
 #include "dmp_cpu.h"
 #include "thread.h"
 #include "thread_internal.h"
+#include "filesystem.h"
+#include "vmm.h"
 
 extern void SyscallEntry();
 
@@ -88,7 +90,7 @@ SyscallHandler(
             break;
 
         case SyscallIdVirtualAlloc:
-            status = 
+            status = SyscallVirtualAlloc((PVOID)pSyscallParameters[0], (QWORD)pSyscallParameters[1], (VMM_ALLOC_TYPE)pSyscallParameters[2], (PAGE_RIGHTS)pSyscallParameters[3], (UM_HANDLE)pSyscallParameters[4], (QWORD)pSyscallParameters[5], (PVOID*)pSyscallParameters[6]);
             break;
 
         default:
@@ -256,7 +258,66 @@ SyscallThreadCreate(
 
     *ThreadHandle = pThread->Id;
 
+
     return STATUS_SUCCESS;
 }
 
+STATUS
+SyscallVirtualAlloc(
+    IN_OPT      PVOID                   BaseAddress,
+    IN          QWORD                   Size,
+    IN          VMM_ALLOC_TYPE          AllocType,
+    IN          PAGE_RIGHTS             PageRights,
+    IN_OPT      UM_HANDLE               FileHandle,
+    IN_OPT      QWORD                   Key,
+    OUT         PVOID* AllocatedAddress
+)
+{
+    ASSERT(Key == 0);
+    // get file from handle, but um manager not implemented, so we ignore
+    ASSERT(FileHandle == UM_INVALID_HANDLE_VALUE);
+    
+    STATUS status = MmuIsBufferValid(AllocatedAddress, sizeof(PVOID*), PAGE_RIGHTS_WRITE, GetCurrentProcess());
+    if (status != STATUS_SUCCESS)
+    {
+        return status;
+    }
 
+    // PFILE_OBJECT pFileObject = (FileHandle == UM_INVALID_HANDLE_VALUE ? NULL : UmManagerGetFile(FileHandle));
+    PFILE_OBJECT pFileObject = NULL;
+
+    *AllocatedAddress = VmmAllocRegionEx(BaseAddress, Size, AllocType, PageRights, FALSE, pFileObject, NULL, NULL, NULL);
+
+    return STATUS_SUCCESS;
+}
+
+//STATUS
+//SyscallThreadGetHandle(
+//    OUT UM_HANDLE* ThreadHandle
+//)
+//{
+//    
+//    return STATUS_SUCCESS;
+//}
+//
+//STATUS
+//SyscallThreadGetInformation(
+//    IN UM_HANDLE      ThreadHandle,
+//    OUT DWORD* ChildrenCount,
+//    OUT DWORD* TimeSlices,
+//    OUT DWORD* ThreadId,
+//    OUT UM_HANDLE* ParentHandle
+//)
+//{
+//    return STATUS_SUCCESS;
+//}
+//
+//STATUS
+//
+//SyscallThreadGetChildren(
+//    IN UM_HANDLE      ThreadHandle,
+//    OUT UM_HANDLE* ChildrenHandles
+//)
+//{
+//    return STATUS_SUCCESS;
+//}
