@@ -47,9 +47,9 @@ _ThreadSystemGetNextTid(
     void
     )
 {
-    static volatile TID __currentTid = 0;
+    static volatile TID __currentTid = MAX_QWORD;
 
-    return _InterlockedExchangeAdd64(&__currentTid, TID_INCREMENT);
+    return _InterlockedExchangeAdd64(&__currentTid, -1);
 }
 
 static
@@ -415,6 +415,8 @@ ThreadCreateEx(
 
     *Thread = pThread;
 
+    LOG("Thread [tid = 0x%X] is being created", pThread->Id);
+
     return status;
 }
 
@@ -485,6 +487,7 @@ ThreadYield(
         pThread->TickCountEarly++;
     }
     pThread->State = ThreadStateReady;
+    pThread->TimesYielded += 1;
     _ThreadSchedule();
     ASSERT( !LockIsOwner(&m_threadSystemData.ReadyThreadsLock));
     LOG_TRACE_THREAD("Returned from _ThreadSchedule\n");
@@ -560,6 +563,9 @@ ThreadExit(
 
     pThread->State = ThreadStateDying;
     pThread->ExitStatus = ExitStatus;
+
+    LOG("Thread [tid = 0x%X] yielded %u times", pThread->Id, pThread->TimesYielded);
+
     ExEventSignal(&pThread->TerminationEvt);
 
     ProcessNotifyThreadTermination(pThread);
@@ -793,6 +799,7 @@ _ThreadInit(
         pThread->Id = _ThreadSystemGetNextTid();
         pThread->State = ThreadStateBlocked;
         pThread->Priority = Priority;
+        pThread->TimesYielded = 0;
 
         LockInit(&pThread->BlockLock);
 

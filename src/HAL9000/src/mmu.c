@@ -859,6 +859,12 @@ MmuSolvePageFault(
     rightsRequested |= ( pfErrCode.Write ? PAGE_RIGHTS_WRITE : 0 );
     rightsRequested |= ( pfErrCode.Execution ? PAGE_RIGHTS_EXECUTE : 0 );
 
+    LOG("Faulting Address: 0x%x", FaultingAddress);
+    LOG("Requested access rights: 0x%x", rightsRequested);
+    if (pfErrCode.Usermode) {
+         LOG("Usermode process: %s", GetCurrentThread()->Process->ProcessName);
+    }
+
     return VmmSolvePageFault(FaultingAddress,
                              rightsRequested,
                              pfErrCode.Usermode ? GetCurrentThread()->Process->PagingData : &m_mmuData.PagingData

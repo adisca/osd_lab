@@ -600,6 +600,20 @@ VmmAllocRegionEx(
                     __leave;
                 }
 
+                PRESERVED_FRAME rf = ExAllocatePoolWithTag(PoolAllocateZeroMemory, sizeof(RESERVED_FRAME), HEAP_IDT_TAG, 0);
+                if (NULL == rf)
+                {
+                    LOG_FUNC_ERROR_ALLOC("HeapAllocatePoolWithTag", sizeof(RESERVED_FRAME));
+                }
+                else
+                {
+                    rf->pa = pa;
+                    rf->va = pBaseAddress;
+                    rf->NbFrames = noOfFrames;
+
+                    InsertTailList(&GetCurrentProcess()->ReservedFramesList, &rf->ReservedFrameElem);
+                }
+
                 MmuMapMemoryInternal(pa,
                                      alignedSize,
                                      Rights,
@@ -853,6 +867,20 @@ VmmSolvePageFault(
                 pCpu->PageFaults = pCpu->PageFaults + 1;
             }
             bSolvedPageFault = TRUE;
+
+            PRESERVED_FRAME rf = ExAllocatePoolWithTag(PoolAllocateZeroMemory, sizeof(RESERVED_FRAME), HEAP_IDT_TAG, 0);
+            if (NULL == rf)
+            {
+                LOG_FUNC_ERROR_ALLOC("HeapAllocatePoolWithTag", sizeof(RESERVED_FRAME));
+            }
+            else
+            {
+                rf->pa = pa;
+                rf->va = alignedAddress;
+                rf->NbFrames = 1;
+
+                InsertTailList(&GetCurrentProcess()->ReservedFramesList, &rf->ReservedFrameElem);
+            }
         }
     }
     __finally

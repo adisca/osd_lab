@@ -180,6 +180,8 @@ PmmReserveMemoryEx(
 
     LockRelease( &m_pmmData.AllocationLock, oldState);
 
+    LOG("Physical range allocated: (0x%x - 0x%x)!\n", idx * PAGE_SIZE, (idx + NoOfFrames) * PAGE_SIZE - 1);
+
     return (PHYSICAL_ADDRESS) ( (QWORD) idx * PAGE_SIZE );
 }
 

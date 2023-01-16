@@ -7,6 +7,8 @@
 #include "mmu.h"
 #include "process_internal.h"
 #include "dmp_cpu.h"
+#include "thread_internal.h"
+#include "vmm.h"
 
 extern void SyscallEntry();
 
@@ -218,6 +220,31 @@ SyscallFileWrite(
             LOG("[%s]:[%s]\n", ProcessGetName(NULL), Buffer);
         }
     }
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+SyscallVirtualAlloc(
+    IN_OPT      PVOID                   BaseAddress,
+    IN          QWORD                   Size,
+    IN          VMM_ALLOC_TYPE          AllocType,
+    IN          PAGE_RIGHTS             PageRights,
+    IN_OPT      UM_HANDLE               FileHandle,
+    IN_OPT      QWORD                   Key,
+    OUT         PVOID* AllocatedAddress
+)
+{
+    ASSERT(Key == 0);
+    // get file from handle, but um manager not implemented, so we ignore
+    ASSERT(FileHandle == UM_INVALID_HANDLE_VALUE);
+
+    MmuIsBufferValid(AllocatedAddress, , PAGE_RIGHTS_WRITE, GetCurrentProcess());
+
+    // PFILE_OBJECT pFileObject = (FileHandle == UM_INVALID_HANDLE_VALUE ? NULL : UmManagerGetFile(FileHandle));
+    PFILE_OBJECT pFileObject = NULL;
+
+    *AllocatedAddress = VmmAllocRegionEx(BaseAddress, Size, AllocType, PageRights, FALSE, pFileObject, NULL, NULL, NULL);
 
     return STATUS_SUCCESS;
 }
