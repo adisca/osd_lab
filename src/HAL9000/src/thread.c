@@ -47,9 +47,11 @@ _ThreadSystemGetNextTid(
     void
     )
 {
+    // __currentTid is Prev_TID
     static volatile TID __currentTid = 0;
+    static volatile QWORD N = 0;
 
-    return _InterlockedExchangeAdd64(&__currentTid, TID_INCREMENT);
+    return _InterlockedExchangeAdd64(&__currentTid, 4 * (N++) + 5);
 }
 
 static
@@ -440,7 +442,7 @@ ThreadTick(
     }
     pThread->TickCountCompleted++;
 
-    if (++pCpu->ThreadData.RunningThreadTicks >= THREAD_TIME_SLICE)
+    if (++pCpu->ThreadData.RunningThreadTicks >= pThread->ThreadTimeSlices)
     {
         LOG_TRACE_THREAD("Will yield on return\n");
         pCpu->ThreadData.YieldOnInterruptReturn = TRUE;
@@ -725,6 +727,8 @@ _ThreadInit(
     DWORD nameLen;
     PVOID pStack;
     INTR_STATE oldIntrState;
+    INTR_STATE oldIntrStateChildren;
+    PTHREAD parent;
 
     LOG_FUNC_START;
 
@@ -732,6 +736,8 @@ _ThreadInit(
     ASSERT(NULL != Thread);
     ASSERT_INFO(ThreadPriorityLowest <= Priority && Priority <= ThreadPriorityMaximum,
                 "Priority is 0x%x\n", Priority);
+
+    parent = GetCurrentThread();
 
     status = STATUS_SUCCESS;
     pThread = NULL;
@@ -793,6 +799,19 @@ _ThreadInit(
         pThread->Id = _ThreadSystemGetNextTid();
         pThread->State = ThreadStateBlocked;
         pThread->Priority = Priority;
+
+
+        LOG("Thread [tid=0x%X] is being created\n", pThread->Id);
+        pThread->ThreadTimeSlices = (pThread->Id % 2 == 0 ? 7 : 3);
+
+        LockInit(&pThread->LockChildrenList);
+        InitializeListHead(&pThread->ListChildren);
+        pThread->Parent = parent;
+        
+        LockAcquire(&parent->LockChildrenList, &oldIntrStateChildren);
+        InsertTailList(&parent->ListChildren, &pThread->ListChildrenElem);
+        LockRelease(&parent->LockChildrenList, oldIntrStateChildren);
+
 
         LockInit(&pThread->BlockLock);
 
@@ -950,7 +969,7 @@ _ThreadSetupMainThreadUserStack(
     ASSERT(ResultingStack != NULL);
     ASSERT(Process != NULL);
 
-    *ResultingStack = InitialStack;
+    *ResultingStack = (PVOID)PtrDiff(InitialStack, SHADOW_STACK_SIZE + sizeof(PVOID));
 
     return STATUS_SUCCESS;
 }
@@ -1181,15 +1200,36 @@ _ThreadDestroy(
     IN_OPT  PVOID                   Context
     )
 {
+
     INTR_STATE oldState;
     PTHREAD pThread = (PTHREAD) CONTAINING_RECORD(Object, THREAD, RefCnt);
 
     ASSERT(NULL != pThread);
     ASSERT(NULL == Context);
 
+    LOG("Thread [tid=0x%X] is being destroyed\n", pThread->Id);
+
     LockAcquire(&m_threadSystemData.AllThreadsLock, &oldState);
     RemoveEntryList(&pThread->AllList);
     LockRelease(&m_threadSystemData.AllThreadsLock, oldState);
+
+    LockAcquire(&pThread->Parent->LockChildrenList, &oldState);
+    RemoveEntryList(&pThread->ListChildrenElem);
+
+    PLIST_ENTRY pCurEntry;
+
+    for (pCurEntry = pThread->Parent->ListChildren.Flink;
+        pCurEntry != &pThread->Parent->ListChildren;
+        pCurEntry = pCurEntry->Flink)
+    {
+        PTHREAD child = CONTAINING_RECORD(pCurEntry, THREAD, ListChildrenElem);
+
+        child->Parent = pThread->Parent;
+        InsertTailList(&pThread->Parent->ListChildren, &child->ListChildrenElem);
+        pThread->Parent;
+    }
+
+    LockRelease(&pThread->Parent->LockChildrenList, oldState);
 
     // This must be done before removing the thread from the process list, else
     // this may be the last thread and the process VAS will be freed by the time

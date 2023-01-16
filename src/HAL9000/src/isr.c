@@ -146,6 +146,12 @@ _IsrExceptionHandler(
     // no use in logging if we solved the problem
     if (!exceptionHandled)
     {
+        if (!GdtIsSegmentPrivileged((WORD)StackPointer->Registers.CS))
+        {
+            LOG("Exception 0x%X(exception name: %s) at address 0x%X will cause the termination of process ?!\n", InterruptIndex, EXCEPTION_NAME[InterruptIndex], StackPointer->Registers.Rip);
+            ProcessTerminate(NULL);
+        }
+
         PVOID* pCurrentStackItem;
         DWORD noOfStackElementsToDump;
         PPCPU pCpu;
