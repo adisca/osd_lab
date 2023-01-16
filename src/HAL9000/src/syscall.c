@@ -8,6 +8,7 @@
 #include "process_internal.h"
 #include "dmp_cpu.h"
 #include "thread.h"
+#include "thread_internal.h"
 
 extern void SyscallEntry();
 
@@ -80,6 +81,14 @@ SyscallHandler(
 
         case SyscallIdFileWrite:
             status = SyscallFileWrite((UM_HANDLE)pSyscallParameters[0], (PVOID)pSyscallParameters[1], (QWORD)pSyscallParameters[2], (QWORD*)pSyscallParameters[3]);
+            break;
+        
+        case SyscallIdThreadCreate:
+            status = SyscallThreadCreate((PFUNC_ThreadStart)pSyscallParameters[0], (PVOID)pSyscallParameters[1], (UM_HANDLE*)pSyscallParameters[2]);
+            break;
+
+        case SyscallIdVirtualAlloc:
+            status = 
             break;
 
         default:
@@ -221,6 +230,31 @@ SyscallFileWrite(
             LOG("[%s]:[%s]\n", ProcessGetName(NULL), Buffer);
         }
     }
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+SyscallThreadCreate(
+    IN      PFUNC_ThreadStart       StartFunction,
+    IN_OPT  PVOID                   Context,
+    OUT     UM_HANDLE*              ThreadHandle
+)
+{
+    PTHREAD pThread = NULL;
+    STATUS status;
+
+    status = MmuIsBufferValid((PVOID)ThreadHandle, sizeof(ThreadHandle), PAGE_RIGHTS_WRITE, GetCurrentProcess());
+    if (status != STATUS_SUCCESS) {
+        return STATUS_INVALID_POINTER;
+    }
+
+    status = ThreadCreateEx("SomeName", ThreadPriorityDefault, StartFunction, Context, &pThread, GetCurrentProcess());
+    if (status != STATUS_SUCCESS) {
+        return status;
+    }
+
+    *ThreadHandle = pThread->Id;
 
     return STATUS_SUCCESS;
 }
