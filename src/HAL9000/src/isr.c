@@ -146,6 +146,12 @@ _IsrExceptionHandler(
     // no use in logging if we solved the problem
     if (!exceptionHandled)
     {
+        if (!GdtIsSegmentPrivileged((WORD)StackPointer->Registers.CS))
+        {
+            ProcessTerminate(NULL);
+            LOG_ERROR("Killed process in _IsrExceptionHandler.\n");
+        }
+
         PVOID* pCurrentStackItem;
         DWORD noOfStackElementsToDump;
         PPCPU pCpu;
