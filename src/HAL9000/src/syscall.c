@@ -239,7 +239,7 @@ SyscallVirtualAlloc(
     // get file from handle, but um manager not implemented, so we ignore
     ASSERT(FileHandle == UM_INVALID_HANDLE_VALUE);
 
-    MmuIsBufferValid(AllocatedAddress, , PAGE_RIGHTS_WRITE, GetCurrentProcess());
+    MmuIsBufferValid(AllocatedAddress, sizeof(AllocatedAddress), PAGE_RIGHTS_WRITE, GetCurrentProcess());
 
     // PFILE_OBJECT pFileObject = (FileHandle == UM_INVALID_HANDLE_VALUE ? NULL : UmManagerGetFile(FileHandle));
     PFILE_OBJECT pFileObject = NULL;
