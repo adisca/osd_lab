@@ -7,6 +7,9 @@
 #include "mmu.h"
 #include "process_internal.h"
 #include "dmp_cpu.h"
+#include "thread_internal.h"
+#include "filesystem.h"
+#include "vmm.h"
 
 extern void SyscallEntry();
 
@@ -68,6 +71,22 @@ SyscallHandler(
             status = SyscallValidateInterface((SYSCALL_IF_VERSION)*pSyscallParameters);
             break;
         // STUDENT TODO: implement the rest of the syscalls
+        case SyscallIdThreadExit:
+            status = SyscallThreadExit((DWORD)pSyscallParameters[0]);
+            break;
+
+        case SyscallIdProcessExit:
+            status = SyscallProcessExit((STATUS)pSyscallParameters[0]);
+            break;
+
+        case SyscallIdFileWrite:
+            status = SyscallFileWrite((UM_HANDLE)pSyscallParameters[0], (PVOID)pSyscallParameters[1], (QWORD)pSyscallParameters[2], (QWORD*)pSyscallParameters[3]);
+            break;
+
+        case SyscallIdVirtualAlloc:
+            status = SyscallVirtualAlloc((PVOID)pSyscallParameters[0], (QWORD)pSyscallParameters[1], (VMM_ALLOC_TYPE)pSyscallParameters[2], (PAGE_RIGHTS)pSyscallParameters[3], (UM_HANDLE)pSyscallParameters[4], (QWORD)pSyscallParameters[5], (PVOID *)pSyscallParameters[6]);
+            break;
+
         default:
             LOG_ERROR("Unimplemented syscall called from User-space!\n");
             status = STATUS_UNSUPPORTED;
@@ -170,3 +189,67 @@ SyscallValidateInterface(
 }
 
 // STUDENT TODO: implement the rest of the syscalls
+
+STATUS
+SyscallThreadExit(
+    IN      STATUS                  ExitStatus
+)
+{
+    ThreadExit(ExitStatus);
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+SyscallProcessExit(
+    IN      STATUS                  ExitStatus
+)
+{
+    ProcessTerminate(GetCurrentProcess());
+
+    return ExitStatus;
+}
+
+STATUS
+SyscallFileWrite(
+    IN  UM_HANDLE                   FileHandle,
+    IN_READS_BYTES(BytesToWrite)
+    PVOID                           Buffer,
+    IN  QWORD                       BytesToWrite,
+    OUT QWORD* BytesWritten
+)
+{
+    if (FileHandle == UM_FILE_HANDLE_STDOUT) {
+        if (Buffer != NULL) {
+            *BytesWritten = BytesToWrite;
+            LOG("[%s]:[%s]\n", ProcessGetName(NULL), Buffer);
+        }
+    }
+
+    return STATUS_SUCCESS;
+}
+
+STATUS
+SyscallVirtualAlloc(
+    IN_OPT      PVOID                   BaseAddress,
+    IN          QWORD                   Size,
+    IN          VMM_ALLOC_TYPE          AllocType,
+    IN          PAGE_RIGHTS             PageRights,
+    IN_OPT      UM_HANDLE               FileHandle,
+    IN_OPT      QWORD                   Key,
+    OUT         PVOID* AllocatedAddress
+)
+{
+    ASSERT(Key == 0);
+    // get file from handle, but um manager not implemented, so we ignore
+    ASSERT(FileHandle == UM_INVALID_HANDLE_VALUE);
+
+    MmuIsBufferValid(AllocatedAddress, sizeof(AllocatedAddress), PAGE_RIGHTS_WRITE, GetCurrentProcess());
+
+    // PFILE_OBJECT pFileObject = (FileHandle == UM_INVALID_HANDLE_VALUE ? NULL : UmManagerGetFile(FileHandle));
+    PFILE_OBJECT pFileObject = NULL;
+
+    *AllocatedAddress = VmmAllocRegionEx(BaseAddress, Size, AllocType, PageRights, FALSE, pFileObject, NULL, NULL, NULL);
+
+    return STATUS_SUCCESS;
+}
