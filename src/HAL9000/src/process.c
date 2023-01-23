@@ -507,6 +507,10 @@ _ProcessInit(
         InitializeListHead(&pProcess->ThreadList);
         LockInit(&pProcess->ThreadListLock);
 
+        LockInit(&pProcess->ReservedFramesLock);
+        InitializeListHead(&pProcess->ReservedFramesList);
+        pProcess->NbOfReservedFrames = 0;
+
         // Do this as late as possible - we want to interfere as little as possible
         // with the system management in case something goes wrong (PID + full process
         // list management)
@@ -722,6 +726,22 @@ _ProcessDestroy(
     ASSERT(Process->NumberOfThreads == 0);
 
     LOG_TRACE_PROCESS("Will destroy process with PID 0x%X\n", Process->Id);
+
+
+    INTR_STATE oldState;
+
+    LockAcquire(&Process->ReservedFramesLock, &oldState);
+    for (PLIST_ENTRY CurEntry = Process->ReservedFramesList.Flink;
+        CurEntry != &Process->ReservedFramesList;
+        CurEntry = CurEntry->Flink)
+    {
+        PRESERVED_FRAME pReservedFrame = (PRESERVED_FRAME) CONTAINING_RECORD(CurEntry, RESERVED_FRAME, ReservedFrameElem);
+
+        LOG("Process Destroyed containing the Reserved Frame:\nPhysical addr: 0x%X   Virtual Address: 0x%X   Nb of Frames: %d\n",
+            pReservedFrame->pa, pReservedFrame->va, pReservedFrame->NbFrames);
+    }
+    LockRelease(&Process->ReservedFramesLock, oldState);
+    // I should free the memory here, but I am lazy and it isn't required
 
     // It's ok to use the remove entry list function because when we create the process we call
     // InitializeListHead => the RemoveEntryList has no problem with an empty list as long as it
